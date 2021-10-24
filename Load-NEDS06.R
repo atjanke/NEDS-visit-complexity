@@ -5,6 +5,7 @@ library(tidyverse)
 setwd("/Users/alexanderjanke/Data/neds/2006_NEDS")
 
 neds06 <- fread("NEDS_2006_ED.csv")
+
 colnames(neds06) <- c("DISCWT","HCUPFILE","HOSP_ED","KEY_ED","CPT1","CPT2","CPT3","CPT4","CPT5",
                   "CPT6","CPT7","CPT8","CPT9","CPT10","CPT11","CPT12","CPT13","CPT14","CPT15",
                   "NCPT","NPR_ED","PCLS_ED1","PCLS_ED2","PCLS_ED3","PCLS_ED4","PCLS_ED5",
@@ -24,11 +25,11 @@ colnames(core) <- c("AGE","AMONTH","AWEEKEND","CHRON1","CHRON2","CHRON3","CHRON4
                     "E_CCS3","E_CCS4","FEMALE","HCUPFILE","HOSP_ED","REGION","INTENT_S","KEY_ED","NDX",
                     "NECODE","NEDS_STR","PAY1","PAY2","PL_NCHS2","TOTCHGED","YEAR","ZIPINC_Q")
 
-core <- core %>% select.(HOSP_ED,KEY_ED,DISCWT,NEDS_STR,AGE,FEMALE,PAY1,DISP_ED,DXCCS1:DXCCS15)
+core <- core %>% select.(HOSP_ED,KEY_ED,DISCWT,NEDS_STR,AGE,FEMALE,PAY1,DISP_ED,DX1:DX15,DXCCS1:DXCCS15)
 
 neds06 <- neds06 %>%
   left_join.(core,by="KEY_ED") %>%
-  select.(HOSP_ED,KEY_ED,DISCWT,NEDS_STR,AGE,FEMALE,PAY1,DISP_ED,DXCCS1:DXCCS15,CPT1:CPT15,PRCCSED1:PRCCSED9)
+  select.(HOSP_ED,KEY_ED,DISCWT,NEDS_STR,AGE,FEMALE,PAY1,DISP_ED,DX1:DX15,DXCCS1:DXCCS15,CPT1:CPT15,PRCCSED1:PRCCSED9)
 rm(core)
 
 setwd("~/Box/EMF-Work/Project-Folder/NEDS-visit-complexity")
@@ -40,3 +41,6 @@ neds06 <- EM_Code(neds06)
 
 
 saveRDS(neds06,"data-cleaned/neds06.rds")
+
+subsample <- sample_n(neds06,1000000)
+saveRDS(subsample,"data-cleaned/neds06-subsample.rds")
