@@ -37,7 +37,7 @@ tic()
 # https://cran.r-project.org/web/packages/comorbidity/comorbidity.pdf
 library(comorbidity)
 elix <- comorbidity(x=diag_list,id="KEY_ED",code="code",score="elixhauser",icd="icd10",assign0=FALSE) %>%
-  select.(KEY_ED,score) %>%
+  select.(KEY_ED,score,chf:depre) %>%
   rename.(ELIX = score) %>%
   mutate.(ELIX = case_when(
     ELIX<0 ~ 0,

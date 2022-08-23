@@ -1,6 +1,7 @@
 library(data.table)
 library(tidytable)
 library(tidyverse)
+library(splitstackshape)
 
 setwd("/Users/alexanderjanke/Data/neds/2009_NEDS")
 
@@ -43,7 +44,7 @@ setwd("~/Box/EMF-Work/Project-Folder/NEDS-visit-complexity")
 source("Functions.R")
 neds09 <- EM_Code(neds09)
 
-saveRDS(neds09,"data-cleaned/neds09.rds")
+saveRDS(neds09,"__data-cleaned/neds09.rds")
 
-subsample <- sample_n(neds09,1000000)
-saveRDS(subsample,"data-cleaned/neds09-subsample.rds")
+subsample <- stratified(neds09,c("HOSP_ED"),0.1)
+saveRDS(subsample,"__data-cleaned/neds09-subsample.rds")

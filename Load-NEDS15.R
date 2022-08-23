@@ -1,6 +1,7 @@
 library(data.table)
 library(tidytable)
 library(tidyverse)
+library(splitstackshape)
 
 # Quarters 1-3
 setwd("/Users/alexanderjanke/Data/neds/2015_NEDS")
@@ -91,10 +92,10 @@ source("Functions.R")
 neds15 <- EM_Code(neds15)
 
 
-saveRDS(neds15,"data-cleaned/neds15.rds")
+saveRDS(neds15,"__data-cleaned/neds15.rds")
 
-subsample <- sample_n(neds15,1000000)
-saveRDS(subsample,"data-cleaned/neds15-subsample.rds")
+subsample <- stratified(neds15,c("HOSP_ED"),0.1)
+saveRDS(subsample,"__data-cleaned/neds15-subsample.rds")
 
 
 

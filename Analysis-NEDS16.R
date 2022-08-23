@@ -6,7 +6,7 @@ library(tictoc)
 
 # Load full NEDS RDS file
 tic()
-neds16 <- readRDS("data-cleaned/neds16.rds")
+neds16 <- readRDS("__data-cleaned/neds16.rds")
 toc()
 
 # Remove age<18
@@ -76,7 +76,7 @@ tic()
 # https://cran.r-project.org/web/packages/comorbidity/comorbidity.pdf
 library(comorbidity)
 elix <- comorbidity(x=diag_list,id="KEY_ED",code="code",score="elixhauser",icd="icd10",assign0=FALSE) %>%
-  select.(KEY_ED,score) %>%
+  select.(KEY_ED,score,chf:depre) %>%
   rename.(ELIX = score) %>%
   mutate.(ELIX = case_when(
     ELIX<0 ~ 0,
@@ -90,13 +90,16 @@ neds16 <- neds16 %>%
 rm(elix)
 gc()
 
+# Filter out DISP_ED --> short-term hospital
+neds16 <- neds16 %>% filter.(DISP_ED!=2)
+
 # Save the analysis sample
-saveRDS(neds16,"data-analysis/neds16-analysis.rds")
+saveRDS(neds16,"__data-analysis/neds16-analysis.rds")
 
 # Save a stratified subsample
 library(splitstackshape)
 neds16_strat <- stratified(neds16, c("HOSP_ED"), 0.1)
-saveRDS(neds16_strat,"data-analysis/neds16-analysis-subsample.rds")
+saveRDS(neds16_strat,"__data-analysis/neds16-analysis-subsample.rds")
 
 # Save the hospital-level data
 data <- fread("../../../../Data/neds/2016_NEDS/NEDS_2016_Hospital.csv")
@@ -107,4 +110,4 @@ colnames(data) <- c("DISCWT","HOSPWT","CONTROL","HOSP_ED","REGION","TRAUMA",
 hosp16 <- list_of_sites %>% left_join.(data,by="HOSP_ED")
 
 
-saveRDS(hosp16,"data-analysis/hosp16-analysis.rds")
+saveRDS(hosp16,"__data-analysis/hosp16-analysis.rds")

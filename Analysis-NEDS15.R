@@ -6,7 +6,7 @@ library(tictoc)
 
 # Load full NEDS RDS file
 tic()
-neds15 <- readRDS("data-cleaned/neds15.rds")
+neds15 <- readRDS("__data-cleaned/neds15.rds")
 toc()
 
 # Remove age<18
@@ -46,29 +46,27 @@ rm(neds15)
 gc()
 
 setwd("~/Box/EMF-Work/Project-Folder/NEDS-visit-complexity")
-source("Analysis-NEDS15_Q1Q3.R")
+source("01_Load-Clean-Data/Analysis-NEDS15_Q1Q3.R")
 setwd("~/Box/EMF-Work/Project-Folder/NEDS-visit-complexity")
-source("Analysis-NEDS15_Q4.R")
+source("01_Load-Clean-Data/Analysis-NEDS15_Q4.R")
 
 neds15 <-rbindlist(list(neds15_Q1Q3,neds15_Q4))
 rm(neds15_Q1Q3,neds15_Q4)
 gc()
 
-neds15 <- neds15 %>% select.(-ICD)
-
-
-
 
 setwd("~/Box/EMF-Work/Project-Folder/NEDS-visit-complexity")
 
+# Filter out DISP_ED --> short-term hospital
+neds15 <- neds15 %>% filter.(DISP_ED!=2)
 
 # Save the analysis sample
-saveRDS(neds15,"data-analysis/neds15-analysis.rds")
+saveRDS(neds15,"__data-analysis/neds15-analysis.rds")
 
 # Save a stratified subsample
 library(splitstackshape)
 neds15_strat <- stratified(neds15, c("HOSP_ED"), 0.1)
-saveRDS(neds15_strat,"data-analysis/neds15-analysis-subsample.rds")
+saveRDS(neds15_strat,"__data-analysis/neds15-analysis-subsample.rds")
 
 # Save the hospital-level data
 data <- fread("../../../../Data/neds/2015_NEDS/NEDS_2015_Hospital.csv")
@@ -79,4 +77,4 @@ colnames(data) <- c("DISCWT","HOSPWT","CONTROL","HOSP_ED","REGION","TRAUMA",
 hosp15 <- list_of_sites %>% left_join.(data,by="HOSP_ED")
 
 
-saveRDS(hosp15,"data-analysis/hosp15-analysis.rds")
+saveRDS(hosp15,"__data-analysis/hosp15-analysis.rds")

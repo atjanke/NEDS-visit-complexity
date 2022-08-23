@@ -1,6 +1,7 @@
 library(data.table)
 library(tidytable)
 library(tidyverse)
+library(splitstackshape)
 
 # Quarters 1-3
 setwd("/Users/alexanderjanke/Data/neds/2018_NEDS")
@@ -49,103 +50,13 @@ ccsr <- ccsr %>%
 ccsr[,1] <- lapply(ccsr[,1],gsub,pattern="\\'",replacement='')
 ccsr[,2] <- lapply(ccsr[,2],gsub,pattern="\\'",replacement='')
 
-library(tictoc)
-tic()
-neds18 <- neds18 %>%
-  rename.(DX=DX1) %>% left_join.(ccsr,by=c("DX")) %>% rename.(DXCCS1=CCSR) %>% select.(-DX)
-gc()
-toc()
-
-tic()
-neds18 <- neds18 %>%
-  rename.(DX=DX2) %>% left_join.(ccsr,by=c("DX")) %>% rename.(DXCCS2=CCSR) %>% select.(-DX)
-gc()
-toc()
-
-tic()
-neds18 <- neds18 %>%
-  rename.(DX=DX3) %>% left_join.(ccsr,by=c("DX")) %>% rename.(DXCCS3=CCSR) %>% select.(-DX)
-gc()
-toc()
-
-tic()
-neds18 <- neds18 %>%
-  rename.(DX=DX4) %>% left_join.(ccsr,by=c("DX")) %>% rename.(DXCCS4=CCSR) %>% select.(-DX)
-gc()
-toc()
-
-tic()
-neds18 <- neds18 %>%
-  rename.(DX=DX5) %>% left_join.(ccsr,by=c("DX")) %>% rename.(DXCCS5=CCSR) %>% select.(-DX)
-gc()
-toc()
-
-tic()
-neds18 <- neds18 %>%
-  rename.(DX=DX6) %>% left_join.(ccsr,by=c("DX")) %>% rename.(DXCCS6=CCSR) %>% select.(-DX)
-gc()
-toc()
-
-tic()
-neds18 <- neds18 %>%
-  rename.(DX=DX7) %>% left_join.(ccsr,by=c("DX")) %>% rename.(DXCCS7=CCSR) %>% select.(-DX)
-gc()
-toc()
-
-tic()
-neds18 <- neds18 %>%
-  rename.(DX=DX8) %>% left_join.(ccsr,by=c("DX")) %>% rename.(DXCCS8=CCSR) %>% select.(-DX)
-gc()
-toc()
-
-tic()
-neds18 <- neds18 %>%
-  rename.(DX=DX9) %>% left_join.(ccsr,by=c("DX")) %>% rename.(DXCCS9=CCSR) %>% select.(-DX)
-gc()
-toc()
-
-tic()
-neds18 <- neds18 %>%
-  rename.(DX=DX10) %>% left_join.(ccsr,by=c("DX")) %>% rename.(DXCCS10=CCSR) %>% select.(-DX)
-gc()
-toc()
-
-tic()
-neds18 <- neds18 %>%
-  rename.(DX=DX11) %>% left_join.(ccsr,by=c("DX")) %>% rename.(DXCCS11=CCSR) %>% select.(-DX)
-gc()
-toc()
-
-tic()
-neds18 <- neds18 %>%
-  rename.(DX=DX12) %>% left_join.(ccsr,by=c("DX")) %>% rename.(DXCCS12=CCSR) %>% select.(-DX)
-gc()
-toc()
-
-tic()
-neds18 <- neds18 %>%
-  rename.(DX=DX13) %>% left_join.(ccsr,by=c("DX")) %>% rename.(DXCCS13=CCSR) %>% select.(-DX)
-gc()
-toc()
-
-tic()
-neds18 <- neds18 %>%
-  rename.(DX=DX14) %>% left_join.(ccsr,by=c("DX")) %>% rename.(DXCCS14=CCSR) %>% select.(-DX)
-gc()
-toc()
-
-tic()
-neds18 <- neds18 %>%
-  rename.(DX=DX15) %>% left_join.(ccsr,by=c("DX")) %>% rename.(DXCCS15=CCSR) %>% select.(-DX)
-gc()
-toc()
 
 # Build 
 source("Functions.R")
 neds18 <- EM_Code(neds18)
 
 
-saveRDS(neds18,"data-cleaned/neds18.rds")
+saveRDS(neds18,"__data-cleaned/neds18.rds")
 
-subsample <- sample_n(neds18,1000000)
-saveRDS(subsample,"data-cleaned/neds18-subsample.rds")
+subsample <- stratified(neds18,c("HOSP_ED"),0.1)
+saveRDS(subsample,"__data-cleaned/neds18-subsample.rds")
